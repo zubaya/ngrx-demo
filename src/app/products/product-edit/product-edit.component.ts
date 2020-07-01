@@ -6,12 +6,8 @@ import { takeWhile } from 'rxjs/operators';
 import { GenericValidator } from '../../shared/generic-validator';
 import { NumberValidators } from '../../shared/number.validator';
 import { Product } from '../product';
-import { ProductService } from '../product.service';
 import * as productActions from '../state/product.actions';
 import * as fromProduct from '../state/product.reducer';
-
-
-
 
 @Component({
   selector: 'pm-product-edit',
@@ -34,7 +30,6 @@ export class ProductEditComponent implements OnInit, OnDestroy {
 
   constructor(
     private fb: FormBuilder,
-    private productService: ProductService,
     private store: Store<fromProduct.State>
   ) {
     // Defines all of the validation messages for the form.
@@ -126,10 +121,7 @@ export class ProductEditComponent implements OnInit, OnDestroy {
   deleteProduct(): void {
     if (this.product && this.product.id) {
       if (confirm(`Really delete the product: ${this.product.productName}?`)) {
-        this.productService.deleteProduct(this.product.id).subscribe({
-          next: () => this.store.dispatch(new productActions.ClearCurrentProduct()),
-          error: err => (this.errorMessage = err.error)
-        });
+        this.store.dispatch(new productActions.DeleteProduct(this.product.id));
       }
     } else {
       // No need to delete, it was never saved
@@ -146,15 +138,9 @@ export class ProductEditComponent implements OnInit, OnDestroy {
         const p = { ...this.product, ...this.productForm.value };
 
         if (p.id === 0) {
-          this.productService.createProduct(p).subscribe({
-            next: product => this.store.dispatch(new productActions.SetCurrentProduct(product)),
-            error: err => (this.errorMessage = err.error)
-          });
+          this.store.dispatch(new productActions.CreateProduct(p));
         } else {
-          this.productService.updateProduct(p).subscribe({
-            next: product => this.store.dispatch(new productActions.SetCurrentProduct(product)),
-            error: err => (this.errorMessage = err.error)
-          });
+          this.store.dispatch(new productActions.UpdateProduct(p));
         }
       }
     } else {

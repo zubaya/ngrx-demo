@@ -2,7 +2,6 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 import { Subscription, Observable } from 'rxjs';
 import { Product } from '../product';
-import { ProductService } from '../product.service';
 import * as productActions from '../state/product.actions';
 import * as fromProduct from '../state/product.reducer';
 import { takeWhile } from 'rxjs/operators';
@@ -25,7 +24,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
   errorMessage$: Observable<string>;
   products$: Observable<Product[]>;
 
-  constructor(private productService: ProductService, private store: Store<fromProduct.State>) {}
+  constructor(private store: Store<fromProduct.State>) {}
 
   ngOnInit(): void {
     this.store
